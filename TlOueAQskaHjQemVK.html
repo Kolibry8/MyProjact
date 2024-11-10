@@ -1,0 +1,514 @@
+<html><head><base href="." target="_blank"><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"><link rel="icon" href="data:,"><title>Falling Dragons Game</title><style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+    background: linear-gradient(to bottom, #87CEEB, #1E90FF);
+    position: relative;
+    transition: background 2s ease;
+}
+
+body.starry-sky {
+    background: linear-gradient(to bottom, #1a0033, #000066);
+    animation: bgShift 5s infinite alternate;
+}
+
+@keyframes bgShift {
+    0% { background: linear-gradient(to bottom, #1a0033, #000066); }
+    50% { background: linear-gradient(to bottom, #2a0044, #1a0066); }
+    100% { background: linear-gradient(to bottom, #1a0033, #000066); }
+}
+
+.star {
+    position: absolute;
+    width: 2px;
+    height: 2px;
+    background: white;
+    border-radius: 50%;
+    animation: twinkle 1.5s infinite alternate;
+    box-shadow: 0 0 3px #fff, 0 0 5px #fff, 0 0 8px #e0c3ff;
+}
+
+@keyframes twinkle {
+    0% { opacity: 0.2; transform: scale(1); background: white; }
+    50% { opacity: 0.8; transform: scale(1.2); background: #e0c3ff; }
+}
+
+.dragon {
+    position: absolute;
+    width: 120px; /* Increased from 100px */
+    height: 120px; /* Increased from 100px */
+    cursor: pointer;
+    transition: transform 0.3s ease;
+    touch-action: manipulation; /* Add touch action optimization */
+    padding: 10px; /* Add larger hit area with padding */
+    box-sizing: content-box; /* Ensure hit area is included in element bounds */
+    display: flex; /* Center image within larger bounds */
+    justify-content: center;
+    align-items: center;
+}
+
+.dragon img {
+    width: 100px; /* Keep original size */
+    height: 100px; /* Keep original size */
+    object-fit: contain;
+    pointer-events: none; /* Prevent image from interfering with clicks */
+}
+
+.spinning {
+    animation: spin 2s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.notification {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: rgba(255, 255, 255, 0.9);
+    padding: 20px 40px;
+    border-radius: 15px;
+    font-size: 24px;
+    font-family: Arial, sans-serif;
+    color: #4a0080;
+    box-shadow: 0 0 20px rgba(224, 195, 255, 0.5);
+    z-index: 1000;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+}
+
+.continue-btn {
+    padding: 10px 20px;
+    font-size: 18px;
+    background: #4a0080;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.continue-btn:hover {
+    background: #6a00b8;
+    transform: scale(1.05);
+}
+
+.paused {
+    animation-play-state: paused !important;
+}
+
+.game-title {
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    font-size: 24px;
+    font-family: Arial, sans-serif;
+    color: white;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+}
+
+.game-subtitle {
+    position: fixed;
+    top: 60px;
+    left: 20px;
+    font-size: 16px;
+    font-family: Arial, sans-serif;
+    color: white;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+    max-width: 300px;
+    line-height: 1.4;
+}
+
+.pause-btn, .end-game-btn {
+    min-width: 100px;
+    min-height: 44px; /* Minimum touch target size */
+    padding: 12px 20px;
+    position: fixed;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    z-index: 1000;
+}
+
+.pause-btn {
+    top: 20px;
+    right: 20px;
+    background: rgba(74, 0, 128, 0.7);
+}
+
+.pause-btn:hover {
+    background: rgba(106, 0, 184, 0.9);
+    transform: scale(1.05);
+}
+
+.end-game-btn {
+    top: 70px;
+    right: 20px;
+    background: rgba(184, 0, 0, 0.7);
+}
+
+.end-game-btn:hover {
+    background: rgba(220, 0, 0, 0.9);
+    transform: scale(1.05);
+}
+
+.mode-selection {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: linear-gradient(to bottom, #87CEEB, #1E90FF);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+    z-index: 2000;
+}
+
+.mode-btn {
+    padding: 20px 40px;
+    font-size: 20px;
+    background: rgba(74, 0, 128, 0.8);
+    color: white;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    min-width: 250px;
+}
+
+.mode-btn:hover {
+    background: rgba(106, 0, 184, 0.9);
+    transform: scale(1.05);
+}
+
+/* Mobile mode specific styles */
+body.mobile-mode .pause-btn,
+body.mobile-mode .end-game-btn {
+    bottom: 20px;
+    top: auto;
+}
+
+body.mobile-mode .pause-btn {
+    left: 20px;
+    right: auto;
+}
+
+body.mobile-mode .end-game-btn {
+    right: 20px;
+}
+
+@media (max-width: 768px) {
+    .game-title {
+        font-size: 20px;
+        top: 10px;
+        left: 10px;
+    }
+    
+    .game-subtitle {
+        font-size: 14px;
+        top: 40px;
+        left: 10px;
+        max-width: 200px;
+    }
+
+    .pause-btn {
+        top: 10px;
+        right: 10px;
+    }
+
+    .end-game-btn {
+        top: 60px;
+        right: 10px;
+    }
+
+    .notification {
+        width: 90%;
+        max-width: 320px;
+        font-size: 18px;
+        padding: 15px 25px;
+    }
+}
+</style></head><body>
+<div class="game-title">Раскрути Юпика</div>
+<div class="game-subtitle">Раскрути одновременно не менее 5 Юпиков и продержись дольше других</div>
+<button class="pause-btn">Пауза</button>
+<button class="end-game-btn">Завершить игру</button>
+
+<script>
+function createStars() {
+    const numberOfStars = 150;
+    for (let i = 0; i < numberOfStars; i++) {
+        const star = document.createElement('div');
+        star.className = 'star';
+        star.style.left = Math.random() * 100 + 'vw';
+        star.style.top = Math.random() * 100 + 'vh';
+        star.style.animationDelay = Math.random() * 2 + 's';
+        document.body.appendChild(star);
+    }
+}
+
+function showModeSelection() {
+    const modeSelect = document.createElement('div');
+    modeSelect.className = 'mode-selection';
+    modeSelect.innerHTML = `
+        <button class="mode-btn" onclick="startGame('desktop')">Игра с компьютера</button>
+        <button class="mode-btn" onclick="startGame('mobile')">Игра с мобильного</button>
+    `;
+    document.body.appendChild(modeSelect);
+}
+
+class Dragon {
+    constructor() {
+        this.element = document.createElement('div');
+        this.element.className = 'dragon';
+        this.element.style.left = Math.random() * (window.innerWidth - 120) + 'px';
+        this.element.style.top = '-120px';
+        
+        const img = document.createElement('img');
+        const images = [
+            '/э1 копия.png',
+            '/э2 копия.png',
+            '/э3 копия.png',
+            '/э4 копия.png',
+            '/э5 копия.png',
+            '/э6 копия.png',
+            '/э7 копия.png',
+            '/э8 копия.png',
+            '/э9 копия.png',
+            '/э10 копия.png',
+            '/э11 копия.png'
+        ];
+        img.src = images[Math.floor(Math.random() * images.length)];
+        img.alt = 'Юпик';
+        this.element.appendChild(img);
+        
+        this.baseSpeed = 1 + Math.random() * 2;
+        this.speed = this.baseSpeed;
+        
+        this.element.addEventListener('click', () => {
+            if (!this.element.classList.contains('spinning')) {
+                this.element.classList.add('spinning');
+            }
+        });
+        
+        this.element.addEventListener('touchstart', (e) => {
+            e.preventDefault(); // Prevent double-firing on some devices
+            if (!this.element.classList.contains('spinning')) {
+                this.element.classList.add('spinning');
+            }
+        });
+        
+        document.body.appendChild(this.element);
+    }
+    
+    move() {
+        const currentTop = parseFloat(this.element.style.top);
+        if (currentTop > window.innerHeight) {
+            document.body.removeChild(this.element);
+            return false;
+        }
+        this.element.style.top = (currentTop + this.speed) + 'px';
+        return true;
+    }
+
+    setSlowMotion(enabled) {
+        this.speed = enabled ? this.baseSpeed * 0.8 : this.baseSpeed;
+    }
+
+    isSpinning() {
+        return this.element.classList.contains('spinning');
+    }
+}
+
+class Game {
+    constructor(mode) {
+        this.mode = mode;
+        this.requiredSpinning = mode === 'mobile' ? 3 : 5;
+        
+        // Update subtitle based on mode
+        const subtitle = document.querySelector('.game-subtitle');
+        subtitle.textContent = `Раскрути одновременно не менее ${this.requiredSpinning} Юпиков и продержись дольше других`;
+        
+        if (mode === 'mobile') {
+            document.body.classList.add('mobile-mode');
+        }
+
+        this.dragons = [];
+        this.maxDragons = 3;
+        this.gameTime = 0;
+        this.stars = [];
+        this.spinningTimer = 0;
+        this.lastNotificationMinute = 0;
+        this.isPaused = false;
+        this.longestSpinningStreak = 0;
+        createStars();
+
+        const pauseBtn = document.querySelector('.pause-btn');
+        pauseBtn.addEventListener('click', () => {
+            if (this.isPaused) {
+                this.resumeGame();
+                pauseBtn.textContent = 'Пауза';
+            } else {
+                this.pauseGame();
+                pauseBtn.textContent = 'Продолжить';
+            }
+        });
+
+        const endGameBtn = document.querySelector('.end-game-btn');
+        endGameBtn.addEventListener('click', () => {
+            this.endGame();
+        });
+
+        // Prevent unwanted touch behaviors
+        document.addEventListener('touchmove', (e) => {
+            e.preventDefault();
+        }, { passive: false });
+        
+        // Prevent zooming on double-tap
+        document.addEventListener('dblclick', (e) => {
+            e.preventDefault();
+        });
+
+        setInterval(() => {
+            if (!this.isPaused) {
+                this.gameTime += 10;
+                if (this.maxDragons < 15) {
+                    this.maxDragons += 2;
+                }
+            }
+        }, 10000);
+        
+        this.spawnInterval = setInterval(() => {
+            if (!this.isPaused && this.dragons.length < this.maxDragons) {
+                this.dragons.push(new Dragon());
+            }
+        }, 1000);
+        
+        this.moveInterval = setInterval(() => {
+            if (!this.isPaused) {
+                this.dragons = this.dragons.filter(dragon => dragon.move());
+                this.checkSpinningCount();
+            }
+        }, 16);
+    }
+
+    endGame() {
+        this.pauseGame();
+        const minutes = Math.floor(this.longestSpinningStreak / 60000);
+        const notification = document.createElement('div');
+        notification.className = 'notification';
+        notification.innerHTML = `
+            <div>Игра завершена!</div>
+            <div>Ваш лучший результат: ${minutes} ${minutes === 1 ? 'минута' : 'минуты'}</div>
+            <div>В течение этого времени вам удавалось удерживать ${this.requiredSpinning} и более Юпиков в движении!</div>
+            <button class="continue-btn" onclick="window.location.reload()">Новая игра</button>
+        `;
+        document.body.appendChild(notification);
+    }
+
+    pauseGame() {
+        this.isPaused = true;
+        document.querySelectorAll('.dragon, .star').forEach(element => {
+            element.classList.add('paused');
+        });
+    }
+
+    resumeGame() {
+        this.isPaused = false;
+        document.querySelectorAll('.dragon, .star').forEach(element => {
+            element.classList.remove('paused');
+        });
+    }
+
+    showNotification(message) {
+        const notification = document.createElement('div');
+        notification.className = 'notification';
+        notification.innerHTML = `<div>${message}</div>`;
+        document.body.appendChild(notification);
+        
+        this.pauseGame();
+        
+        setTimeout(() => {
+            document.body.removeChild(notification);
+            this.resumeGame();
+        }, 5000);
+    }
+
+    checkSpinningCount() {
+        if (this.dragons.length > 0) {
+            const spinningCount = this.dragons.filter(dragon => dragon.isSpinning()).length;
+            const isSlowMotionActive = spinningCount >= this.requiredSpinning;
+            
+            this.dragons.forEach(dragon => {
+                dragon.setSlowMotion(isSlowMotionActive);
+            });
+
+            if (isSlowMotionActive) {
+                document.body.classList.add('starry-sky');
+                this.spinningTimer += 16;
+                if (this.spinningTimer > this.longestSpinningStreak) {
+                    this.longestSpinningStreak = this.spinningTimer;
+                }
+                
+                const currentMinute = Math.floor(this.spinningTimer / 60000);
+                if (currentMinute > this.lastNotificationMinute) {
+                    this.lastNotificationMinute = currentMinute;
+                    let message;
+                    const randomChoice = Math.floor(Math.random() * 4);
+                    switch(randomChoice) {
+                        case 0:
+                            message = currentMinute === 1 
+                                ? "Молодец!!! Ты продержался целую минуту!"
+                                : `Отлично!!! Ты продержался уже ${currentMinute} минуты!`;
+                            break;
+                        case 1:
+                            message = `Юпики очень довольны и счастливы, они веселятся уже ${currentMinute} ${currentMinute === 1 ? 'минуту' : 'минуты'}!`;
+                            break;
+                        case 2:
+                            message = `Юпики кружатся уже ${currentMinute} ${currentMinute === 1 ? 'минуту' : 'минуты'}!`;
+                            break;
+                        case 3:
+                            message = `Великолепно!!! Ты держишь темп уже ${currentMinute} ${currentMinute === 1 ? 'минуту' : 'минуты'}!`;
+                            break;
+                    }
+                    this.showNotification(message);
+                }
+            } else {
+                document.body.classList.remove('starry-sky');
+                this.spinningTimer = 0;
+                this.lastNotificationMinute = 0;
+            }
+        }
+    }
+}
+
+function startGame(mode) {
+    document.querySelector('.mode-selection').remove();
+    new Game(mode);
+}
+
+window.onload = () => {
+    showModeSelection();
+};
+</script>
+
+</body></html>
