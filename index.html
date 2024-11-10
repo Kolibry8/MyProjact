@@ -1,3 +1,4 @@
+
 <html><head><base href="." target="_blank"><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"><link rel="icon" href="data:,"><title>Falling Dragons Game</title><style>
 * {
     margin: 0;
@@ -282,20 +283,20 @@ class Dragon {
         this.element.className = 'dragon';
         this.element.style.left = Math.random() * (window.innerWidth - 120) + 'px';
         this.element.style.top = '-120px';
-       
-      
+        
+        const img = document.createElement('img');
         const images = [
-            'https://ibb.co/W6KtXds',
-            'https://ibb.co/pJbh8bz',
-            'https://ibb.co/MspvgZ3',
-            'https://ibb.co/VJxmfyC',
-            'https://ibb.co/Y71CbF9',
-            'https://ibb.co/6sRktP7',
-            'https://ibb.co/9V1RFcL',
-            'https://ibb.co/6BNhNyY',
-            'https://ibb.co/w0Nrg8j',
-            'https://ibb.co/ZzX0BWY',
-            'https://ibb.co/gFQ8HzQ'
+            'https://i.ibb.co/vHzYWrD/1.png',
+            'https://i.ibb.co/QrpDRpN/2.png',
+            'https://i.ibb.co/9N2DpcC/3.png',
+            'https://i.ibb.co/q7C5TGg/4.png',
+            'https://i.ibb.co/wNPkYFH/5.png',
+            'https://i.ibb.co/mzC3yqV/6.png',
+            'https://i.ibb.co/WPMSbGw/7.png',
+            'https://i.ibb.co/zJNcNms/8.png',
+            'https://i.ibb.co/ZL61Xv7/9.png',
+            'https://i.ibb.co/7tCqn2R/10.png',
+            'https://i.ibb.co/93B0zsB/11.png'
         ];
         img.src = images[Math.floor(Math.random() * images.length)];
         img.alt = 'Юпик';
