@@ -22,8 +22,7 @@ body.starry-sky {
 
 @keyframes bgShift {
     0% { background: linear-gradient(to bottom, #1a0033, #000066); }
-    50% { background: linear-gradient(to bottom, #2a0044, #1a0066); }
-    100% { background: linear-gradient(to bottom, #1a0033, #000066); }
+    100% { background: linear-gradient(to bottom, #2a0044, #1a0066); }
 }
 
 .star {
@@ -32,34 +31,34 @@ body.starry-sky {
     height: 2px;
     background: white;
     border-radius: 50%;
-    animation: twinkle 1.5s infinite alternate;
-    box-shadow: 0 0 3px #fff, 0 0 5px #fff, 0 0 8px #e0c3ff;
+    animation: twinkle 2s infinite alternate;
+    box-shadow: 0 0 3px #fff;
 }
 
 @keyframes twinkle {
-    0% { opacity: 0.2; transform: scale(1); background: white; }
-    50% { opacity: 0.8; transform: scale(1.2); background: #e0c3ff; }
+    0% { opacity: 0.3; }
+    100% { opacity: 0.8; }
 }
 
 .dragon {
     position: absolute;
-    width: 120px; /* Increased from 100px */
-    height: 120px; /* Increased from 100px */
+    width: 120px; 
+    height: 120px; 
     cursor: pointer;
     transition: transform 0.3s ease;
-    touch-action: manipulation; /* Add touch action optimization */
-    padding: 10px; /* Add larger hit area with padding */
-    box-sizing: content-box; /* Ensure hit area is included in element bounds */
-    display: flex; /* Center image within larger bounds */
+    touch-action: manipulation; 
+    padding: 10px; 
+    box-sizing: content-box; 
+    display: flex; 
     justify-content: center;
     align-items: center;
 }
 
 .dragon img {
-    width: 100px; /* Keep original size */
-    height: 100px; /* Keep original size */
+    width: 100px; 
+    height: 100px; 
     object-fit: contain;
-    pointer-events: none; /* Prevent image from interfering with clicks */
+    pointer-events: none; 
 }
 
 .spinning {
@@ -136,7 +135,7 @@ body.starry-sky {
 
 .pause-btn, .end-game-btn {
     min-width: 100px;
-    min-height: 44px; /* Minimum touch target size */
+    min-height: 44px; 
     padding: 12px 20px;
     position: fixed;
     color: white;
@@ -256,7 +255,7 @@ body.mobile-mode .end-game-btn {
 
 <script>
 function createStars() {
-    const numberOfStars = 150;
+    const numberOfStars = 50; // Reduced from 150
     for (let i = 0; i < numberOfStars; i++) {
         const star = document.createElement('div');
         star.className = 'star';
@@ -312,7 +311,7 @@ class Dragon {
         });
         
         this.element.addEventListener('touchstart', (e) => {
-            e.preventDefault(); // Prevent double-firing on some devices
+            e.preventDefault(); 
             if (!this.element.classList.contains('spinning')) {
                 this.element.classList.add('spinning');
             }
@@ -345,7 +344,6 @@ class Game {
         this.mode = mode;
         this.requiredSpinning = mode === 'mobile' ? 3 : 5;
         
-        // Update subtitle based on mode
         const subtitle = document.querySelector('.game-subtitle');
         subtitle.textContent = `Раскрути одновременно не менее ${this.requiredSpinning} Юпиков и продержись дольше других`;
         
@@ -354,7 +352,7 @@ class Game {
         }
 
         this.dragons = [];
-        this.maxDragons = 3;
+        this.maxDragons = 3; // Reduced max dragons
         this.gameTime = 0;
         this.stars = [];
         this.spinningTimer = 0;
@@ -379,12 +377,10 @@ class Game {
             this.endGame();
         });
 
-        // Prevent unwanted touch behaviors
         document.addEventListener('touchmove', (e) => {
             e.preventDefault();
         }, { passive: false });
         
-        // Prevent zooming on double-tap
         document.addEventListener('dblclick', (e) => {
             e.preventDefault();
         });
@@ -392,8 +388,8 @@ class Game {
         setInterval(() => {
             if (!this.isPaused) {
                 this.gameTime += 10;
-                if (this.maxDragons < 15) {
-                    this.maxDragons += 2;
+                if (this.maxDragons < 10) { // Reduced maximum dragons limit
+                    this.maxDragons += 1; // Reduced increment
                 }
             }
         }, 10000);
@@ -402,14 +398,14 @@ class Game {
             if (!this.isPaused && this.dragons.length < this.maxDragons) {
                 this.dragons.push(new Dragon());
             }
-        }, 1000);
+        }, 1500); // Increased spawn interval
         
         this.moveInterval = setInterval(() => {
             if (!this.isPaused) {
                 this.dragons = this.dragons.filter(dragon => dragon.move());
                 this.checkSpinningCount();
             }
-        }, 16);
+        }, 33); // Changed to 33ms
     }
 
     endGame() {
@@ -465,7 +461,7 @@ class Game {
 
             if (isSlowMotionActive) {
                 document.body.classList.add('starry-sky');
-                this.spinningTimer += 16;
+                this.spinningTimer += 33; // Updated to match move interval
                 if (this.spinningTimer > this.longestSpinningStreak) {
                     this.longestSpinningStreak = this.spinningTimer;
                 }
