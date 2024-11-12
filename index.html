@@ -282,6 +282,7 @@ class Dragon {
         this.element.className = 'dragon';
         this.element.style.left = Math.random() * (window.innerWidth - 120) + 'px';
         this.element.style.top = '-120px';
+        this.creationTime = Date.now(); // Added creation timestamp
         
         const img = document.createElement('img');
         const images = [
@@ -321,6 +322,12 @@ class Dragon {
     }
     
     move() {
+        // Increase speed after 1 minute
+        if (Date.now() - this.creationTime > 60000 && this.baseSpeed === this.speed) {
+            this.baseSpeed *= 1.3; // Increase base speed by 30%
+            this.speed = this.baseSpeed;
+        }
+        
         const currentTop = parseFloat(this.element.style.top);
         if (currentTop > window.innerHeight) {
             document.body.removeChild(this.element);
