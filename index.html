@@ -1,5 +1,5 @@
 
-<html><head><base href="." target="_blank"><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"><link rel="icon" href="data:,"><title>Falling Dragons Game</title><style>
+<html><head><base href="."><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"><link rel="icon" href="data:,"><title>Falling Dragons Game</title><style>
 * {
     margin: 0;
     padding: 0;
@@ -302,7 +302,7 @@ class Dragon {
         img.alt = 'Юпик';
         this.element.appendChild(img);
         
-        this.baseSpeed = 2 + Math.random() * 2.5;
+        this.baseSpeed = 2.2 + Math.random() * 2.75; // Increased from 2 + Math.random() * 2.5
         this.speed = this.baseSpeed;
         
         this.element.addEventListener('click', () => {
