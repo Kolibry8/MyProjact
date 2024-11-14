@@ -122,8 +122,9 @@ body.starry-sky {
 
 .game-subtitle {
     position: fixed;
-    top: 60px;
-    left: 20px;
+    bottom: 20px; /* Changed from top: 60px to bottom: 20px */
+    left: 50%;
+    transform: translateX(-50%); /* Center horizontally */
     font-size: 16px;
     font-family: Arial, sans-serif;
     color: white;
@@ -131,6 +132,7 @@ body.starry-sky {
     z-index: 1000;
     max-width: 300px;
     line-height: 1.4;
+    text-align: center;
 }
 
 .pause-btn, .end-game-btn {
@@ -225,9 +227,8 @@ body.mobile-mode .end-game-btn {
     
     .game-subtitle {
         font-size: 14px;
-        top: 40px;
-        left: 10px;
-        max-width: 200px;
+        bottom: 80px; /* Higher bottom position on mobile to avoid buttons */
+        max-width: 280px;
     }
 
     .pause-btn {
